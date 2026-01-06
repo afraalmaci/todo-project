@@ -1,7 +1,7 @@
 package com.afra.todo;
 
 import jakarta.persistence.*;
-
+import java.time.LocalDateTime;
 @Entity
 @Table(name = "todos")
 public class Todo {
@@ -12,6 +12,7 @@ public class Todo {
     private String title;
     private String description;
     private boolean completed = false;
+    private LocalDateTime dueDate ;
 
     public Todo() {}
 
@@ -29,4 +30,6 @@ public class Todo {
     public void setDescription(String description) { this.description = description; }
     public boolean isCompleted() { return completed; }
     public void setCompleted(boolean completed) { this.completed = completed; }
+    public LocalDateTime getDueDate() { return dueDate; }
+    public void setDueDate(LocalDateTime dueDate) { this.dueDate = dueDate; }
 }
