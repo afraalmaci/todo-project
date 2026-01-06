@@ -1,5 +1,8 @@
 package com.afra.todo;
 
+import java.util.Set;
+import java.util.HashSet;
+
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
 @Entity
@@ -13,6 +16,11 @@ public class Todo {
     private String description;
     private boolean completed = false;
     private LocalDateTime dueDate ;
+
+    @ElementCollection
+    @CollectionTable(name = "todo_tags", joinColumns = @JoinColumn(name = "todo_id"))
+    @Column(name = "tag_name")
+    private Set<Tag> tags = new HashSet<>();
 
     public Todo() {}
 
@@ -32,4 +40,6 @@ public class Todo {
     public void setCompleted(boolean completed) { this.completed = completed; }
     public LocalDateTime getDueDate() { return dueDate; }
     public void setDueDate(LocalDateTime dueDate) { this.dueDate = dueDate; }
+    public Set<Tag> getTags() { return tags; }
+    public void setTags(Set<Tag> tags) { this.tags = tags; }
 }

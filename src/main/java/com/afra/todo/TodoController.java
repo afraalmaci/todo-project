@@ -20,6 +20,11 @@ public class TodoController {
         return todoService.getAllTodos();
     }
 
+    @GetMapping("/by-tag/{tagName}")
+    public List<Todo> getTodosByTag(@PathVariable String tagName) {
+        return todoService.getTodosByTag(tagName);
+    }
+
     @PostMapping
     public Todo createTodo(@RequestBody Todo todo) {
         return todoService.createTodo(todo);
@@ -35,4 +40,5 @@ public class TodoController {
         todoService.deleteTodo(id);
         return ResponseEntity.noContent().build();
     }
+
 }

@@ -43,4 +43,8 @@ public class TodoService {
     public void deleteTodo(Long id) {
         todoRepository.deleteById(id);
     }
+
+    public List<Todo> getTodosByTag(String tagName) {
+        return todoRepository.findByTagName(tagName);
+    }
 }
