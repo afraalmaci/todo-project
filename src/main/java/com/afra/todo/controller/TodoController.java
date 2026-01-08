@@ -1,8 +1,8 @@
-package com.afra.todo;
+package com.afra.todo.controller;
 
-import org.springframework.http.ResponseEntity;
+import com.afra.todo.model.Todo;
+import com.afra.todo.service.TodoService;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
 
 @RestController
@@ -16,13 +16,11 @@ public class TodoController {
     }
 
     @GetMapping
-    public List<Todo> getAllTodos() {
+    public List<Todo> getAllTodos(@RequestParam(required = false) String tag) {
+        if (tag != null && !tag.trim().isEmpty()) {
+            return todoService.getTodosByTag(tag.trim());
+        }
         return todoService.getAllTodos();
-    }
-
-    @GetMapping("/by-tag/{tagName}")
-    public List<Todo> getTodosByTag(@PathVariable String tagName) {
-        return todoService.getTodosByTag(tagName);
     }
 
     @PostMapping
@@ -36,9 +34,7 @@ public class TodoController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteTodo(@PathVariable Long id) {
+    public void deleteTodo(@PathVariable Long id) {
         todoService.deleteTodo(id);
-        return ResponseEntity.noContent().build();
     }
-
 }

@@ -1,4 +1,4 @@
-package com.afra.todo;
+package com.afra.todo.model;
 
 import java.util.Set;
 import java.util.HashSet;
@@ -22,6 +22,10 @@ public class Todo {
     @Column(name = "tag_name")
     private Set<Tag> tags = new HashSet<>();
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
+
     public Todo() {}
 
     public Todo(String title, String description) {
@@ -42,4 +46,7 @@ public class Todo {
     public void setDueDate(LocalDateTime dueDate) { this.dueDate = dueDate; }
     public Set<Tag> getTags() { return tags; }
     public void setTags(Set<Tag> tags) { this.tags = tags; }
+    public User getUser() {return user; }
+    public void setUser(User user) { this.user = user; }
+    
 }

@@ -1,4 +1,4 @@
-package com.afra.todo;
+package com.afra.todo.model;
 
 import jakarta.persistence.Embeddable;
 import java.io.Serializable;
