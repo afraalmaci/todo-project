@@ -1,15 +1,18 @@
 package com.afra.todo.service;
 
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.stereotype.Service;
-
+import com.afra.todo.dto.TodoDto;
+import com.afra.todo.model.Tag;
 import com.afra.todo.model.Todo;
 import com.afra.todo.model.User;
 import com.afra.todo.repository.TodoRepository;
 import com.afra.todo.repository.UserRepository;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 public class TodoService {
@@ -23,45 +26,71 @@ public class TodoService {
     }
 
     private User getCurrentUser() {
-    String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
 
-    // Allow unauthenticated access in development by using a default user
-    if ("anonymousUser".equals(username)) {
-        // Try to find or create a default "guest" user
-        return userRepository.findByUsername("guest")
-            .orElseGet(() -> {
-                User guest = new User();
-                guest.setUsername("guest");
-                guest.setPassword("$2a$10$XqJfGq3y2V7zZ4bK6MqN9e1T4Y2aB7cD8eF9gH0iJ1kL2mN3oP4qR"); // bcrypt of "guest"
-                return userRepository.save(guest);
-            });
+        if ("anonymousUser".equals(username)) {
+            return userRepository.findByUsername("guest")
+                .orElseGet(() -> {
+                    User guest = new User();
+                    guest.setUsername("guest");
+                    guest.setPassword("$2a$10$XqJfGq3y2V7zZ4bK6MqN9e1T4Y2aB7cD8eF9gH0iJ1kL2mN3oP4qR");
+                    return userRepository.save(guest);
+                });
+        }
+
+        return userRepository.findByUsername(username)
+            .orElseThrow(() -> new RuntimeException("User not found: " + username));
     }
 
-    return userRepository.findByUsername(username)
-        .orElseThrow(() -> new RuntimeException("User not found: " + username));
-}
-    public Todo createTodo(Todo todo) {
-        // Validate due date is in the future 
+    // Convert Todo entity to TodoDto
+    private TodoDto convertToDto(Todo todo) {
+        TodoDto dto = new TodoDto();
+        dto.setId(todo.getId());
+        dto.setTitle(todo.getTitle());
+        dto.setDescription(todo.getDescription());
+        dto.setCompleted(todo.isCompleted());
+        dto.setDueDate(todo.getDueDate());
+        
+        // Extract tag names only (avoid Tag objects)
+        if (todo.getTags() != null) {
+            Set<String> tagNames = todo.getTags().stream()
+                .map(Tag::getName)
+                .collect(Collectors.toSet());
+            dto.setTags(tagNames);
+        }
+        
+        dto.setUsername(todo.getUser().getUsername());
+        return dto;
+    }
+
+    public TodoDto createTodo(Todo todo) {
         if (todo.getDueDate() != null && todo.getDueDate().isBefore(LocalDateTime.now())) {
             throw new IllegalArgumentException("Due date must be in the future");
         }
 
         User currentUser = getCurrentUser();
         todo.setUser(currentUser);
-        return todoRepository.save(todo);
+        Todo saved = todoRepository.save(todo);
+        return convertToDto(saved);
     }
 
-    public List<Todo> getAllTodos() {
+    public List<TodoDto> getAllTodos() {
         User currentUser = getCurrentUser();
-        return todoRepository.findByUserId(currentUser.getId());
+        List<Todo> todos = todoRepository.findByUserId(currentUser.getId());
+        return todos.stream()
+            .map(this::convertToDto)
+            .collect(Collectors.toList());
     }
 
-    public List<Todo> getTodosByTag(String tagName) {
+    public List<TodoDto> getTodosByTag(String tagName) {
         User currentUser = getCurrentUser();
-        return todoRepository.findByUserIdAndTagName(currentUser.getId(), tagName);
+        List<Todo> todos = todoRepository.findByUserIdAndTagName(currentUser.getId(), tagName);
+        return todos.stream()
+            .map(this::convertToDto)
+            .collect(Collectors.toList());
     }
 
-    public Todo updateTodo(Long id, Todo todoDetails) {
+    public TodoDto updateTodo(Long id, Todo todoDetails) {
         Todo todo = todoRepository.findById(id)
             .orElseThrow(() -> new RuntimeException("Todo not found with id: " + id));
 
@@ -82,7 +111,8 @@ public class TodoService {
         todo.setCompleted(todoDetails.isCompleted());
         todo.setTags(todoDetails.getTags());
 
-        return todoRepository.save(todo);
+        Todo updated = todoRepository.save(todo);
+        return convertToDto(updated);
     }
 
     public void deleteTodo(Long id) {

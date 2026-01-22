@@ -7,6 +7,7 @@
 /Users/afragurcan/Desktop/Afra/Projects/todo-project/backend/src/main/java/com/afra/todo/dto/AuthResponse.java
 /Users/afragurcan/Desktop/Afra/Projects/todo-project/backend/src/main/java/com/afra/todo/dto/LoginRequest.java
 /Users/afragurcan/Desktop/Afra/Projects/todo-project/backend/src/main/java/com/afra/todo/dto/RegisterRequest.java
+/Users/afragurcan/Desktop/Afra/Projects/todo-project/backend/src/main/java/com/afra/todo/dto/TodoDto.java
 /Users/afragurcan/Desktop/Afra/Projects/todo-project/backend/src/main/java/com/afra/todo/model/Tag.java
 /Users/afragurcan/Desktop/Afra/Projects/todo-project/backend/src/main/java/com/afra/todo/model/Todo.java
 /Users/afragurcan/Desktop/Afra/Projects/todo-project/backend/src/main/java/com/afra/todo/model/User.java
