@@ -4,7 +4,9 @@ import com.afra.todo.dto.AuthResponse;
 import com.afra.todo.dto.LoginRequest;
 import com.afra.todo.dto.RegisterRequest;
 import com.afra.todo.service.AuthService;
-import org.springframework.beans.factory.annotation.Autowired;
+
+import jakarta.validation.Valid;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,7 +22,7 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<?> register(@RequestBody RegisterRequest request) {
+    public ResponseEntity<?> register(@Valid @RequestBody RegisterRequest request) {
         if (authService.register(request)) {
             return ResponseEntity.ok("User registered successfully");
         }

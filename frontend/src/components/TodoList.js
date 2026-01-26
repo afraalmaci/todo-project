@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import ConfirmModal from './ConfirmModal';
 import styles from '../styles/TodoList.module.css';
@@ -6,6 +6,7 @@ import styles from '../styles/TodoList.module.css';
 export default function TodoList() {
   const navigate = useNavigate();
   const token = localStorage.getItem('token'); 
+
   const [todos, setTodos] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -20,50 +21,52 @@ export default function TodoList() {
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const [todoToDelete, setTodoToDelete] = useState(null);
 
-  useEffect(() => {
-    fetchTodos();
-  }, []);
-
-  const apiCall = async (url, options = {}) => {
-    const config = {
-      ...options,
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`,
-        ...options.headers,
-      },
-    };
-    const res = await fetch(url, config);
-
-    if (res.status === 401) {
-      alert('Session expired. Please log in again.');
-      handleLogout();
-      return null;
-    }
-
-    if (res.status === 204) return null;
-    if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
-    return res.json();
-  };
-
-  const fetchTodos = async () => {
-    try {
-      setLoading(true);
-      const data = await apiCall('http://localhost:8080/api/todos');
-      setTodos(data || []);
-      setError(null);
-    } catch (err) {
-      console.error('Fetch todos error:', err);
-      setError('Failed to load todos');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleLogout = () => {
+  const handleLogout = useCallback(() => {
     localStorage.removeItem('token');
     navigate('/login', { replace: true });
-  };
+  }, [navigate]);
+  
+  const apiCall = useCallback(async (url, options = {}) => {
+      const config = {
+        ...options,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
+          ...options.headers,
+        },
+      };
+      const res = await fetch(url, config);
+
+      if (res.status === 401) {
+        alert('Session expired. Please log in again.');
+        handleLogout();
+        return null;
+      }
+
+      if (res.status === 204) return null;
+      if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
+      return res.json();
+  }, [token,handleLogout]);
+
+
+  const fetchTodos = useCallback(async () => {
+      try {
+        setLoading(true);
+        const data = await apiCall('http://localhost:8080/api/todos');
+        setTodos(data || []);
+        setError(null);
+      } catch (err) {
+        console.error('Fetch todos error:', err);
+        setError('Failed to load todos');
+      } finally {
+        setLoading(false);
+      }
+  }, [apiCall]);
+
+  useEffect(() => {
+    fetchTodos();
+  }, [fetchTodos]);
+
 
   const addTodo = async (e) => {
     e.preventDefault();

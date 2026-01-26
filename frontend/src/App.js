@@ -22,7 +22,6 @@ const AuthRoute = ({ children }) => {
 function AppContent() {
   return (
     <div className="app-container">
-      <h1>Todo App</h1>
       <Routes>
         {/* Public routes: only accessible when not logged in */}
         <Route path="/login" element={
