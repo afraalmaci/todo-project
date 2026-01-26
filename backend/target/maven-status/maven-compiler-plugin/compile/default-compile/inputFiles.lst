@@ -3,7 +3,6 @@
 /Users/afragurcan/Desktop/Afra/Projects/todo-project/backend/src/main/java/com/afra/todo/config/SecurityConfig.java
 /Users/afragurcan/Desktop/Afra/Projects/todo-project/backend/src/main/java/com/afra/todo/controller/AuthController.java
 /Users/afragurcan/Desktop/Afra/Projects/todo-project/backend/src/main/java/com/afra/todo/controller/TodoController.java
-/Users/afragurcan/Desktop/Afra/Projects/todo-project/backend/src/main/java/com/afra/todo/controller/UserController.java
 /Users/afragurcan/Desktop/Afra/Projects/todo-project/backend/src/main/java/com/afra/todo/dto/AuthResponse.java
 /Users/afragurcan/Desktop/Afra/Projects/todo-project/backend/src/main/java/com/afra/todo/dto/LoginRequest.java
 /Users/afragurcan/Desktop/Afra/Projects/todo-project/backend/src/main/java/com/afra/todo/dto/RegisterRequest.java

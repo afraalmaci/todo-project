@@ -18,7 +18,7 @@ import java.util.function.Function;
 public class JwtUtil {
 
     @Value("${jwt.secret}")
-    private String secret; // must be >=32 chars for HS256, >=64 for HS512
+    private String secret;
 
     @Value("${jwt.expirationMs:86400000}")
     private Long expirationMs;
@@ -63,7 +63,7 @@ public class JwtUtil {
                 .setSubject(subject)
                 .setIssuedAt(new Date(System.currentTimeMillis()))
                 .setExpiration(new Date(System.currentTimeMillis() + expirationMs))
-                .signWith(getSigningKey(), SignatureAlgorithm.HS256) // 👈 use HS256
+                .signWith(getSigningKey(), SignatureAlgorithm.HS256)
                 .compact();
     }
 

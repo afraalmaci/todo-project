@@ -1,12 +1,16 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import ConfirmModal from './ConfirmModal';
+import styles from '../styles/TodoList.module.css';
 
-export default function TodoList({ token, onLogout }) {
+export default function TodoList() {
+  const navigate = useNavigate();
+  const token = localStorage.getItem('token'); 
   const [todos, setTodos] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // Form state for new todo
+  // Form state
   const [newTitle, setNewTitle] = useState('');
   const [newDescription, setNewDescription] = useState('');
   const [newDueDate, setNewDueDate] = useState('');
@@ -16,39 +20,31 @@ export default function TodoList({ token, onLogout }) {
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const [todoToDelete, setTodoToDelete] = useState(null);
 
-  // Fetch todos on load
   useEffect(() => {
     fetchTodos();
   }, []);
 
   const apiCall = async (url, options = {}) => {
-  const config = {
-    ...options,
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${token}`,
-      ...options.headers,
-    },
+    const config = {
+      ...options,
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`,
+        ...options.headers,
+      },
+    };
+    const res = await fetch(url, config);
+
+    if (res.status === 401) {
+      alert('Session expired. Please log in again.');
+      handleLogout();
+      return null;
+    }
+
+    if (res.status === 204) return null;
+    if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
+    return res.json();
   };
-  const res = await fetch(url, config);
-
-  if (res.status === 401) {
-    alert('Session expired. Please log in again.');
-    onLogout();
-    return null;
-  }
-
-  // Handle 204 No Content (common for PUT/DELETE)
-  if (res.status === 204) {
-    return null; // no body to parse
-  }
-
-  if (!res.ok) {
-    throw new Error(`HTTP error! status: ${res.status}`);
-  }
-
-  return res.json();
-};
 
   const fetchTodos = async () => {
     try {
@@ -62,6 +58,11 @@ export default function TodoList({ token, onLogout }) {
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+    navigate('/login', { replace: true });
   };
 
   const addTodo = async (e) => {
@@ -98,7 +99,6 @@ export default function TodoList({ token, onLogout }) {
   };
 
   const toggleComplete = async (id, currentStatus) => {
-    // Optimistically update UI
     setTodos(prev =>
       prev.map(todo =>
         todo.id === id ? { ...todo, completed: !currentStatus } : todo
@@ -125,16 +125,13 @@ export default function TodoList({ token, onLogout }) {
     }
   };
 
-  // Open modal when user clicks "Delete"
   const openDeleteModal = (id) => {
     setTodoToDelete(id);
     setDeleteModalOpen(true);
   };
 
-  // Confirm deletion from modal
   const confirmDelete = async () => {
     if (!todoToDelete) return;
-
     const id = todoToDelete;
 
     setTodos(prev => prev.filter(todo => todo.id !== id));
@@ -156,162 +153,92 @@ export default function TodoList({ token, onLogout }) {
     return date.toLocaleDateString() + ' ' + date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
   };
 
+  if (!token) {
+    navigate('/login', { replace: true });
+    return null;
+  }
+
   return (
-    <div style={{ maxWidth: '800px', margin: '0 auto', padding: '20px' }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
+    <div className={styles.container}>
+      <div className={styles.header}>
         <h2>My Todos</h2>
-        <button
-          onClick={onLogout}
-          style={{
-            padding: '6px 12px',
-            backgroundColor: '#f44336',
-            color: 'white',
-            border: 'none',
-            borderRadius: '4px',
-            cursor: 'pointer'
-          }}
-        >
+        <button onClick={handleLogout} className={styles.logoutButton}>
           Logout
         </button>
       </div>
 
       {/* Add Todo Form */}
-      <form onSubmit={addTodo} style={{ marginBottom: '30px', padding: '15px', border: '1px solid #ddd', borderRadius: '8px' }}>
+      <form onSubmit={addTodo} className={styles.addForm}>
         <h3>Add New Todo</h3>
-        <div style={{ marginBottom: '10px' }}>
-          <input
-            type="text"
-            placeholder="Title *"
-            value={newTitle}
-            onChange={(e) => setNewTitle(e.target.value)}
-            required
-            style={{ width: '100%', padding: '8px', marginBottom: '8px' }}
-          />
-          <textarea
-            placeholder="Description"
-            value={newDescription}
-            onChange={(e) => setNewDescription(e.target.value)}
-            rows="2"
-            style={{ width: '100%', padding: '8px', marginBottom: '8px' }}
-          />
-          <input
-            type="datetime-local"
-            value={newDueDate}
-            onChange={(e) => setNewDueDate(e.target.value)}
-            style={{ width: '100%', padding: '8px', marginBottom: '8px' }}
-          />
-          <input
-            type="text"
-            placeholder="Tags (comma separated, e.g. work,urgent)"
-            value={newTags}
-            onChange={(e) => setNewTags(e.target.value)}
-            style={{ width: '100%', padding: '8px', marginBottom: '8px' }}
-          />
-        </div>
-        <button
-          type="submit"
-          style={{
-            padding: '8px 16px',
-            backgroundColor: '#4CAF50',
-            color: 'white',
-            border: 'none',
-            borderRadius: '4px',
-            cursor: 'pointer'
-          }}
-        >
+        <input
+          type="text"
+          placeholder="Title *"
+          value={newTitle}
+          onChange={(e) => setNewTitle(e.target.value)}
+          required
+          className={styles.input}
+        />
+        <textarea
+          placeholder="Description"
+          value={newDescription}
+          onChange={(e) => setNewDescription(e.target.value)}
+          rows="2"
+          className={styles.input}
+        />
+        <input
+          type="datetime-local"
+          value={newDueDate}
+          onChange={(e) => setNewDueDate(e.target.value)}
+          className={styles.input}
+        />
+        <input
+          type="text"
+          placeholder="Tags (comma separated, e.g. work,urgent)"
+          value={newTags}
+          onChange={(e) => setNewTags(e.target.value)}
+          className={styles.input}
+        />
+        <button type="submit" className={styles.addButton}>
           Add Todo
         </button>
       </form>
 
       {/* Loading / Error */}
-      {loading && <p>Loading todos...</p>}
-      {error && <p style={{ color: 'red' }}>{error}</p>}
-      {todos.length === 0 && !loading && <p>No todos yet. Add one above!</p>}
+      {loading && <p className={styles.message}>Loading todos...</p>}
+      {error && <p className={`${styles.message} ${styles.error}`}>{error}</p>}
+      {todos.length === 0 && !loading && <p className={styles.message}>No todos yet. Add one above!</p>}
 
       {/* Todo List */}
-      <ul style={{ listStyle: 'none', padding: 0 }}>
+      <ul className={styles.todoList}>
         {todos.map(todo => (
-          <li
-            key={todo.id}
-            style={{
-              padding: '15px',
-              marginBottom: '10px',
-              border: '1px solid #eee',
-              borderRadius: '8px',
-              backgroundColor: todo.completed ? '#f9f9f9' : 'white',
-              display: 'flex',
-              alignItems: 'flex-start',
-              gap: '12px'
-            }}
-          >
-            {/* Checkbox */}
+          <li key={todo.id} className={`${styles.todoItem} ${todo.completed ? styles.completed : ''}`}>
             <input
               type="checkbox"
               checked={todo.completed}
               onChange={() => toggleComplete(todo.id, todo.completed)}
-              style={{
-                marginTop: '4px',
-                width: '18px',
-                height: '18px',
-                cursor: 'pointer'
-              }}
+              className={styles.checkbox}
             />
-
-            <div style={{ flex: 1 }}>
-              <h4 style={{
-                margin: '0 0 5px 0',
-                textDecoration: todo.completed ? 'line-through' : 'none',
-                color: todo.completed ? '#888' : '#333'
-              }}>
-                {todo.title}
-              </h4>
-              {todo.description && (
-                <p style={{ margin: '0 0 5px 0', color: '#555' }}>{todo.description}</p>
-              )}
+            <div className={styles.todoContent}>
+              <h4 className={todo.completed ? styles.completedText : ''}>{todo.title}</h4>
+              {todo.description && <p>{todo.description}</p>}
               {todo.dueDate && (
-                <p style={{ margin: '0 0 5px 0', fontSize: '0.9em', color: '#666' }}>
-                  📅 Due: {formatDate(todo.dueDate)}
-                </p>
+                <p className={styles.dueDate}>📅 Due: {formatDate(todo.dueDate)}</p>
               )}
               {todo.tags && todo.tags.length > 0 && (
-                <div>
+                <div className={styles.tags}>
                   {todo.tags.map((tag, i) => (
-                    <span
-                      key={i}
-                      style={{
-                        display: 'inline-block',
-                        backgroundColor: '#e0e0e0',
-                        padding: '2px 8px',
-                        borderRadius: '12px',
-                        fontSize: '0.85em',
-                        marginRight: '5px',
-                        marginTop: '5px'
-                      }}
-                    >
+                    <span key={i} className={styles.tag}>
                       {tag.name}
                     </span>
                   ))}
                 </div>
               )}
             </div>
-
-            {/* Delete Button */}
-            <button
-              onClick={() => openDeleteModal(todo.id)}
-              style={{
-                padding: '5px 10px',
-                backgroundColor: '#f44336',
-                color: 'white',
-                border: 'none',
-                borderRadius: '4px',
-                cursor: 'pointer',
-                alignSelf: 'flex-start'
-              }}
-            >
+            <button onClick={() => openDeleteModal(todo.id)} className={styles.deleteButton}>
               Delete
             </button>
           </li>
-))}
+        ))}
       </ul>
 
       {/* Delete Confirmation Modal */}

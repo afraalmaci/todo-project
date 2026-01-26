@@ -1,4 +1,3 @@
-// src/main/java/com/afra/todo/service/UserDetailsServiceImpl.java
 package com.afra.todo.service;
 
 import com.afra.todo.model.User;

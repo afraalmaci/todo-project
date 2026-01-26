@@ -25,7 +25,6 @@ public class User {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Todo> todos = new ArrayList<>();
 
-    // Constructors
     public User() {}
 
     public User(String username, String password) {
@@ -33,7 +32,6 @@ public class User {
         this.password = password;
     }
 
-    // Getters & Setters
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
 

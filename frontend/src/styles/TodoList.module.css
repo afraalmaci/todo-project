@@ -1,0 +1,126 @@
+.container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.logoutButton {
+  padding: 6px 12px;
+  background-color: #f44336;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.addForm {
+  margin-bottom: 30px;
+  padding: 15px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+}
+
+.addForm h3 {
+  margin-top: 0;
+}
+
+.input {
+  width: 100%;
+  padding: 8px;
+  margin-bottom: 8px;
+  box-sizing: border-box;
+}
+
+.addButton {
+  padding: 8px 16px;
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.message {
+  text-align: center;
+  margin: 10px 0;
+}
+
+.error {
+  color: red;
+}
+
+.todoList {
+  list-style: none;
+  padding: 0;
+}
+
+.todoItem {
+  padding: 15px;
+  margin-bottom: 10px;
+  border: 1px solid #eee;
+  border-radius: 8px;
+  background-color: white;
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.completed {
+  background-color: #f9f9f9;
+}
+
+.checkbox {
+  margin-top: 4px;
+  width: 18px;
+  height: 18px;
+  cursor: pointer;
+}
+
+.todoContent {
+  flex: 1;
+}
+
+.todoContent h4 {
+  margin: 0 0 5px 0;
+}
+
+.completedText {
+  text-decoration: line-through;
+  color: #888;
+}
+
+.dueDate {
+  margin: 0 0 5px 0;
+  font-size: 0.9em;
+  color: #666;
+}
+
+.tags {
+  margin-top: 5px;
+}
+
+.tag {
+  display: inline-block;
+  background-color: #e0e0e0;
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-size: 0.85em;
+  margin-right: 5px;
+}
+
+.deleteButton {
+  padding: 5px 10px;
+  background-color: #f44336;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  align-self: flex-start;
+}

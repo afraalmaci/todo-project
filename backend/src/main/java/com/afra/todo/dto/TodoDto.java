@@ -10,12 +10,10 @@ public class TodoDto {
     private boolean completed;
     private LocalDateTime dueDate;
     private Set<String> tags; // Just tag names, not Tag objects
-    private String username;  // Only send username, not full User
+    private String username;
 
-    // Constructors
     public TodoDto() {}
 
-    // Getters & Setters
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
 

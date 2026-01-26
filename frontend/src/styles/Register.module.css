@@ -1,0 +1,29 @@
+.registerForm {
+  width: 100%;
+  max-width: 400px;
+}
+
+.registerInput {
+  display: block;
+  width: 100%;
+  padding: 8px;
+  margin-bottom: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+}
+
+.registerButton {
+  width: 100%;
+  padding: 10px;
+  background-color: #2196F3;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+.registerButton:hover {
+  background-color: #1976D2;
+}

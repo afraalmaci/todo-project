@@ -28,6 +28,7 @@ public class TodoService {
     private User getCurrentUser() {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
 
+        //this part will delete.
         if ("anonymousUser".equals(username)) {
             return userRepository.findByUsername("guest")
                 .orElseGet(() -> {

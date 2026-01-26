@@ -1,73 +1,62 @@
-// frontend/src/App.js
-import React, { useState, useEffect } from 'react';
-import Login from './Login';
-import Register from './Register';
-import TodoList from '../src/components/TodoList';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import Login from './pages/Login';
+import Register from './pages/Register';
+import TodoList from './components/TodoList';
+import './styles/App.css';
 
-function App() {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [token, setToken] = useState(localStorage.getItem('token') || '');
-  const [view, setView] = useState('login'); // 'login', 'register', or 'todos'
+// Helper to get auth token from localStorage
+const getToken = () => localStorage.getItem('token');
 
-  // Check if token exists on load
-  useEffect(() => {
-    const savedToken = localStorage.getItem('token');
-    if (savedToken) {
-      setToken(savedToken);
-      setIsLoggedIn(true);
-      setView('todos');
-    }
-  }, []);
+// Protect routes that require authentication (e.g., /todos)
+const ProtectedRoute = ({ children }) => {
+  const token = getToken();
+  return token ? children : <Navigate to="/login" />;
+};
 
-  const handleLogin = (newToken) => {
-    localStorage.setItem('token', newToken);
-    setToken(newToken);
-    setIsLoggedIn(true);
-    setView('todos');
-  };
+// Redirect authenticated users away from auth pages (e.g., /login, /register)
+const AuthRoute = ({ children }) => {
+  const token = getToken();
+  return token ? <Navigate to="/todos" /> : children;
+};
 
-  const handleLogout = () => {
-    localStorage.removeItem('token');
-    setToken('');
-    setIsLoggedIn(false);
-    setView('login');
-  };
-
-  // Only show todos if logged in
-  if (view === 'todos' && isLoggedIn) {
-    return <TodoList token={token} onLogout={handleLogout} />;
-  }
-
+function AppContent() {
   return (
-    <div style={{ padding: '20px', fontFamily: 'sans-serif', maxWidth: '600px', margin: '0 auto' }}>
+    <div className="app-container">
       <h1>Todo App</h1>
+      <Routes>
+        {/* Public routes: only accessible when not logged in */}
+        <Route path="/login" element={
+          <AuthRoute>
+            <Login />
+          </AuthRoute>
+        } />
+        
+        <Route path="/register" element={
+          <AuthRoute>
+            <Register />
+          </AuthRoute>
+        } />
 
-      {view === 'login' && (
-        <>
-          <Login onLogin={handleLogin} />
-          <p>
-            Don't have an account?{' '}
-            <button onClick={() => setView('register')} style={{ marginLeft: '5px' }}>
-              Register
-            </button>
-          </p>
-        </>
-      )}
-
-      {view === 'register' && (
-        <>
-          <Register onRegisterSuccess={() => setView('login')} />
-          <p>
-            Already have an account?{' '}
-            <button onClick={() => setView('login')} style={{ marginLeft: '5px' }}>
-              Login
-            </button>
-          </p>
-        </>
-      )}
+        {/* Private route: only accessible when logged in */}
+        <Route path="/todos" element={
+          <ProtectedRoute>
+            <TodoList />
+          </ProtectedRoute>
+        } />
+        {/* Catch-all: redirect unknown paths to login */}
+        <Route path="*" element={<Navigate to="/login" replace />} />
+      </Routes>
     </div>
   );
 }
 
+// Wrap app with Router to enable navigation
+function App() {
+  return (
+    <Router>
+      <AppContent />
+    </Router>
+  );
+}
 
 export default App;

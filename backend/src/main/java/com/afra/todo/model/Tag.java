@@ -1,11 +1,10 @@
 package com.afra.todo.model;
 
 import jakarta.persistence.Embeddable;
-import java.io.Serializable;
 import java.util.Objects;
 
 @Embeddable
-public class Tag implements Serializable {
+public class Tag {
 
     private String name;
 

@@ -1,8 +1,11 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import styles from '../styles/Register.module.css';
 
-export default function Register({ onRegisterSuccess }) {
+export default function Register() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -18,9 +21,8 @@ export default function Register({ onRegisterSuccess }) {
 
       if (response.ok) {
         alert('Registration successful! Please log in.');
-        onRegisterSuccess();
+        navigate('/login');
       } else {
-        // Try to get error message from backend
         const errorText = await response.text();
         alert('Registration failed: ' + errorText);
       }
@@ -31,23 +33,26 @@ export default function Register({ onRegisterSuccess }) {
   };
 
   return (
-    <form onSubmit={handleSubmit}>
+    <form onSubmit={handleSubmit} className={styles.registerForm} >
       <input
+        type="text"
         placeholder="Username"
         value={username}
         onChange={(e) => setUsername(e.target.value)}
+        className={styles.registerInput} 
         required
-        style={{ display: 'block', marginBottom: '10px', padding: '5px', width: '100%' }}
       />
       <input
         type="password"
         placeholder="Password"
         value={password}
         onChange={(e) => setPassword(e.target.value)}
+        className= {styles.registerInput}
         required
-        style={{ display: 'block', marginBottom: '10px', padding: '5px', width: '100%' }}
       />
-      <button type="submit" style={{ padding: '8px 16px', width: '100%' }}>Register</button>
+      <button type="submit" className={styles.registerButton} >
+        Register
+      </button>
     </form>
   );
 }
