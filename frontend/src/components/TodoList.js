@@ -5,7 +5,6 @@ import styles from '../styles/TodoList.module.css';
 
 export default function TodoList() {
   const navigate = useNavigate();
-  const token = localStorage.getItem('token'); 
 
   const [todos, setTodos] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -22,52 +21,59 @@ export default function TodoList() {
   const [todoToDelete, setTodoToDelete] = useState(null);
 
   const handleLogout = useCallback(() => {
-    localStorage.removeItem('token');
-    navigate('/login', { replace: true });
+    fetch('http://localhost:8080/api/auth/logout', {
+      method: 'POST',
+      credentials: 'include',
+    })
+      .then(() => {
+        navigate('/login', { replace: true });
+      })
+      .catch((err) => {
+        console.error('Logout error:', err);
+        navigate('/login', { replace: true });
+      });
   }, [navigate]);
   
   const apiCall = useCallback(async (url, options = {}) => {
-      const config = {
-        ...options,
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`,
-          ...options.headers,
-        },
-      };
-      const res = await fetch(url, config);
+    const config = {
+      ...options,
+      credentials: 'include',
+      headers: {
+        'Content-Type': 'application/json',
+        ...options.headers,
+      },
+    };
+    
+    const res = await fetch(url, config);
 
-      if (res.status === 401) {
-        alert('Session expired. Please log in again.');
-        handleLogout();
-        return null;
-      }
+    if (res.status === 401) {
+      handleLogout();
+      return null;
+    }
 
-      if (res.status === 204) return null;
-      if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
-      return res.json();
-  }, [token,handleLogout]);
-
+    if (res.status === 204) return null;
+    if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
+    return res.json();
+  }, [handleLogout]);
 
   const fetchTodos = useCallback(async () => {
-      try {
-        setLoading(true);
-        const data = await apiCall('http://localhost:8080/api/todos');
-        setTodos(data || []);
-        setError(null);
-      } catch (err) {
-        console.error('Fetch todos error:', err);
-        setError('Failed to load todos');
-      } finally {
-        setLoading(false);
-      }
+    try {
+      setLoading(true);
+      const data = await apiCall('http://localhost:8080/api/todos');
+      setTodos(data || []);
+      setError(null);
+    } catch (err) {
+      console.error('Fetch todos error:', err);
+      setError('Failed to load todos');
+    } finally {
+      setLoading(false);
+    }
   }, [apiCall]);
 
   useEffect(() => {
     fetchTodos();
   }, [fetchTodos]);
-
-
+  
   const addTodo = async (e) => {
     e.preventDefault();
     if (!newTitle.trim()) return;
@@ -156,11 +162,6 @@ export default function TodoList() {
     return date.toLocaleDateString() + ' ' + date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
   };
 
-  if (!token) {
-    navigate('/login', { replace: true });
-    return null;
-  }
-
   return (
     <div className={styles.container}>
       <div className={styles.header}>
@@ -170,7 +171,6 @@ export default function TodoList() {
         </button>
       </div>
 
-      {/* Add Todo Form */}
       <form onSubmit={addTodo} className={styles.addForm}>
         <h3>Add New Todo</h3>
         <input
@@ -206,12 +206,10 @@ export default function TodoList() {
         </button>
       </form>
 
-      {/* Loading / Error */}
       {loading && <p className={styles.message}>Loading todos...</p>}
       {error && <p className={`${styles.message} ${styles.error}`}>{error}</p>}
       {todos.length === 0 && !loading && <p className={styles.message}>No todos yet. Add one above!</p>}
 
-      {/* Todo List */}
       <ul className={styles.todoList}>
         {todos.map(todo => (
           <li key={todo.id} className={`${styles.todoItem} ${todo.completed ? styles.completed : ''}`}>
@@ -244,7 +242,6 @@ export default function TodoList() {
         ))}
       </ul>
 
-      {/* Delete Confirmation Modal */}
       {deleteModalOpen && (
         <ConfirmModal
           isOpen={true}

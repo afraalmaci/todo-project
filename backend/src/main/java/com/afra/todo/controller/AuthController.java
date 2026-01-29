@@ -1,18 +1,15 @@
 package com.afra.todo.controller;
 
-import com.afra.todo.dto.AuthResponse;
-import com.afra.todo.dto.LoginRequest;
 import com.afra.todo.dto.RegisterRequest;
 import com.afra.todo.service.AuthService;
 
 import jakarta.validation.Valid;
-
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/auth")
-@CrossOrigin(origins = "http://localhost:3000")
+@CrossOrigin(origins = "http://localhost:3000", allowCredentials = "true")
 public class AuthController {
 
     private final AuthService authService;
@@ -29,13 +26,4 @@ public class AuthController {
         return ResponseEntity.badRequest().body("Username already exists");
     }
 
-    @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody LoginRequest request) {
-        try {
-            String token = authService.login(request);
-            return ResponseEntity.ok(new AuthResponse(token));
-        } catch (RuntimeException e) {
-            return ResponseEntity.status(401).body(e.getMessage());
-        }
-    }
 }
