@@ -4,15 +4,10 @@ import Register from './pages/Register';
 import TodoList from './components/TodoList';
 import './styles/App.css';
 
-// ⚠️ LOCALSTORAGE KULLANMAYACAĞIZ!
-// Kullanıcının login olup olmadığını backend'den kontrol edeceğiz
-
-// Protect routes: API çağrısı yap, 401 alırsan login'e yönlendir
 const ProtectedRoute = ({ children }) => {
   return children;
 };
 
-// Auth pages için koruma yok - herkes erişebilir
 const AuthRoute = ({ children }) => {
   return children;
 };
