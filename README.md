@@ -1,16 +1,16 @@
-# 🌱 Bloom — a todo app
+# 🌱 Bloom: a todo app
 
 A full-stack to-do app with per-user accounts: React + Tailwind on the frontend, a Spring Boot REST API on the backend, PostgreSQL for storage, and JWT-based authentication so every user only ever sees their own todos.
 
-**Live demo:** _(coming soon — see the Deployment section)_
+**Live demo:** [todo-project-eight.vercel.app](https://todo-project-eight.vercel.app) (backend: [todo-project-xyei.onrender.com](https://todo-project-xyei.onrender.com))
 
 ## Features
 
 - Register / log in with a username and password (passwords hashed with BCrypt, sessions handled via JWT)
 - Create, edit, complete, and delete todos
 - Optional due date and free-form tags per todo, with color-coded due-date badges (overdue / today / upcoming) and a progress bar
-- Todos are scoped per user — the API rejects attempts to read or modify someone else's todo
-- A clean, pastel UI built with Tailwind CSS — a small custom design system (soft accent colors, one card style, toast notifications) instead of browser defaults and `alert()`
+- Todos are scoped per user: the API rejects attempts to read or modify someone else's todo
+- A clean, pastel UI built with Tailwind CSS: a small custom design system (soft accent colors, one card style, toast notifications) instead of browser defaults and `alert()`
 
 ## Tech stack
 
@@ -53,7 +53,7 @@ export APP_JWT_SECRET=any-long-random-string-at-least-32-characters
 ./mvnw spring-boot:run
 ```
 
-The API starts on `http://localhost:8080`. Hibernate creates the schema automatically on first run (`ddl-auto=update`) — there's no separate migration step yet.
+The API starts on `http://localhost:8080`. Hibernate creates the schema automatically on first run (`ddl-auto=update`); there's no separate migration step yet.
 
 ### 3. Frontend
 
@@ -74,7 +74,7 @@ All backend config is read from environment variables, with local-friendly defau
 | `SPRING_DATASOURCE_URL` | Postgres JDBC URL | `jdbc:postgresql://localhost:5432/todo_app_db` |
 | `SPRING_DATASOURCE_USERNAME` | Postgres username | `postgres` |
 | `SPRING_DATASOURCE_PASSWORD` | Postgres password | _(empty)_ |
-| `APP_JWT_SECRET` | Secret used to sign JWTs — **must** be overridden with a long random value in any real deployment | a dev-only placeholder |
+| `APP_JWT_SECRET` | Secret used to sign JWTs (**must** be overridden with a long random value in any real deployment) | a dev-only placeholder |
 | `APP_JWT_EXPIRATION_MS` | How long a token stays valid, in ms | `86400000` (24h) |
 | `APP_CORS_ALLOWED_ORIGINS` | Comma-separated list of origins allowed to call the API | `http://localhost:3000` |
 | `PORT` | Port the API listens on | `8080` |
@@ -100,12 +100,12 @@ Authenticated requests send `Authorization: Bearer <token>`, using the token ret
 
 ## Deployment
 
-- **Backend + database:** [Render](https://render.com) — a web service running the Spring Boot API plus a managed Postgres instance. Set the environment variables from the table above in the Render dashboard (in particular `APP_JWT_SECRET` and `APP_CORS_ALLOWED_ORIGINS`).
+- **Backend + database:** [Render](https://render.com): a web service running the Spring Boot API plus a managed Postgres instance. Set the environment variables from the table above in the Render dashboard (in particular `APP_JWT_SECRET` and `APP_CORS_ALLOWED_ORIGINS`).
 - **Frontend:** [Vercel](https://vercel.com), with `REACT_APP_API_URL` pointing at the Render backend's URL.
 
 ## Known limitations
 
-- No database migration tool (Flyway/Liquibase) yet — schema changes rely on Hibernate's `ddl-auto=update`, which is fine for a demo but not for production data.
+- No database migration tool (Flyway/Liquibase) yet; schema changes rely on Hibernate's `ddl-auto=update`, which is fine for a demo but not for production data.
 - The free tier of the backend host may spin down after inactivity, so the very first request after a while can take a few seconds to wake it up.
 
 ## License
