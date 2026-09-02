@@ -58,16 +58,16 @@ export default function Register() {
   };
 
   return (
-    <div className="min-h-screen bg-mist flex items-center justify-center px-4 py-16">
-      <div className="w-full max-w-[340px] bg-white rounded-2xl shadow-card px-7 py-8">
+    <div className="min-h-screen bg-mist dark:bg-night-bg flex items-center justify-center px-4 py-16 transition-colors">
+      <div className="w-full max-w-[340px] bg-white dark:bg-night-card rounded-2xl shadow-card px-7 py-8">
         <div className="flex justify-center mb-6">
           <Logo size="lg" />
         </div>
 
-        <h1 className="text-xl font-bold text-ink text-center mb-1">
+        <h1 className="text-xl font-bold text-ink dark:text-night-text text-center mb-1">
           Create an account
         </h1>
-        <p className="text-center text-muted text-sm mb-6">
+        <p className="text-center text-muted dark:text-night-muted text-sm mb-6">
           A few seconds and you're in
         </p>
 
@@ -78,10 +78,10 @@ export default function Register() {
               placeholder="Username"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
-              className="w-full bg-mist rounded-xl px-3.5 py-3 text-sm text-ink placeholder:text-faint focus:outline-none focus:ring-2 focus:ring-sage-300 transition"
+              className="w-full bg-mist dark:bg-night-bg rounded-xl px-3.5 py-3 text-sm text-ink dark:text-night-text placeholder:text-faint dark:placeholder:text-night-faint focus:outline-none focus:ring-2 focus:ring-sage-300 transition"
             />
             {errors.username && (
-              <p className="mt-1 text-xs font-medium text-rose-500">{errors.username}</p>
+              <p className="mt-1 text-xs font-medium text-rose-500 dark:text-[#e0a3bd]">{errors.username}</p>
             )}
           </div>
 
@@ -90,7 +90,7 @@ export default function Register() {
             placeholder="Password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            className="w-full bg-mist rounded-xl px-3.5 py-3 text-sm text-ink placeholder:text-faint focus:outline-none focus:ring-2 focus:ring-sage-300 transition"
+            className="w-full bg-mist dark:bg-night-bg rounded-xl px-3.5 py-3 text-sm text-ink dark:text-night-text placeholder:text-faint dark:placeholder:text-night-faint focus:outline-none focus:ring-2 focus:ring-sage-300 transition"
           />
 
           <input
@@ -98,11 +98,11 @@ export default function Register() {
             placeholder="Confirm password"
             value={confirmPassword}
             onChange={(e) => setConfirmPassword(e.target.value)}
-            className="w-full bg-mist rounded-xl px-3.5 py-3 text-sm text-ink placeholder:text-faint focus:outline-none focus:ring-2 focus:ring-sage-300 transition"
+            className="w-full bg-mist dark:bg-night-bg rounded-xl px-3.5 py-3 text-sm text-ink dark:text-night-text placeholder:text-faint dark:placeholder:text-night-faint focus:outline-none focus:ring-2 focus:ring-sage-300 transition"
           />
 
           {(password || confirmPassword) && (
-            <div className="bg-mist/70 rounded-lg px-3 py-2">
+            <div className="bg-mist/70 dark:bg-night-bg/70 rounded-lg px-3 py-2">
               <PasswordChecklist
                 rules={['minLength', 'letter', 'number', 'match']}
                 minLength={6}
@@ -115,7 +115,7 @@ export default function Register() {
                   match: 'Passwords match',
                 }}
                 iconSize={12}
-                className="!text-xs [&_span]:text-muted"
+                className="!text-xs [&_span]:text-muted dark:[&_span]:text-night-muted"
                 validColor="#5a9c85"
                 invalidColor="#a85e75"
               />
@@ -123,7 +123,7 @@ export default function Register() {
           )}
 
           {errors.password && (
-            <p className="text-xs font-medium text-rose-500 text-center">{errors.password}</p>
+            <p className="text-xs font-medium text-rose-500 dark:text-[#e0a3bd] text-center">{errors.password}</p>
           )}
 
           <button

@@ -17,6 +17,16 @@ public class Todo {
     private boolean completed = false;
     private LocalDateTime dueDate ;
 
+    // Which list/category this todo belongs to (e.g. "Work", "Personal").
+    // Kept as a plain string rather than a separate entity, same spirit as
+    // tags: lists are created implicitly the first time a todo uses them.
+    private String listName = "Personal";
+
+    // Manual ordering for drag-and-drop. New todos get the current time in
+    // millis so they naturally sort last; reordering overwrites this with
+    // small sequential values.
+    private Long sortOrder = System.currentTimeMillis();
+
     @ElementCollection
     @CollectionTable(name = "todo_tags", joinColumns = @JoinColumn(name = "todo_id"))
     @Column(name = "tag_name")
@@ -48,5 +58,9 @@ public class Todo {
     public void setTags(Set<Tag> tags) { this.tags = tags; }
     public User getUser() {return user; }
     public void setUser(User user) { this.user = user; }
-    
+    public String getListName() { return listName; }
+    public void setListName(String listName) { this.listName = listName; }
+    public Long getSortOrder() { return sortOrder; }
+    public void setSortOrder(Long sortOrder) { this.sortOrder = sortOrder; }
+
 }

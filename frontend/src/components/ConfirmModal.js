@@ -9,21 +9,21 @@ export default function ConfirmModal({ isOpen, onClose, onConfirm, title, messag
       onClick={onClose}
     >
       <div
-        className="animate-pop w-full max-w-sm bg-white rounded-2xl shadow-card px-6 py-6"
+        className="animate-pop w-full max-w-sm bg-white dark:bg-night-card rounded-2xl shadow-card px-6 py-6"
         onClick={(e) => e.stopPropagation()}
       >
         {title && (
-          <h3 className="text-lg font-bold text-ink text-center mb-2">
+          <h3 className="text-lg font-bold text-ink dark:text-night-text text-center mb-2">
             {title}
           </h3>
         )}
         {message && (
-          <p className="text-center text-muted text-sm mb-6">{message}</p>
+          <p className="text-center text-muted dark:text-night-muted text-sm mb-6">{message}</p>
         )}
         <div className="flex gap-3">
           <button
             onClick={onClose}
-            className="flex-1 text-sm font-semibold text-ink bg-mist hover:bg-ghost/40 rounded-xl py-2.5 transition"
+            className="flex-1 text-sm font-semibold text-ink dark:text-night-text bg-mist dark:bg-night-bg hover:bg-ghost/40 dark:hover:bg-night-ghost/40 rounded-xl py-2.5 transition"
           >
             Cancel
           </button>

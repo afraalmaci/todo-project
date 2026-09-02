@@ -49,12 +49,20 @@ public class TodoService {
         }
         
         dto.setUsername(todo.getUser().getUsername());
+        dto.setListName(todo.getListName());
+        dto.setSortOrder(todo.getSortOrder());
         return dto;
     }
 
     public TodoDto createTodo(Todo todo) {
         if (todo.getDueDate() != null && todo.getDueDate().isBefore(LocalDateTime.now())) {
             throw new IllegalArgumentException("Due date must be in the future");
+        }
+
+        if (todo.getListName() == null || todo.getListName().trim().isEmpty()) {
+            todo.setListName("Personal");
+        } else {
+            todo.setListName(todo.getListName().trim());
         }
 
         User currentUser = getCurrentUser();
@@ -65,7 +73,7 @@ public class TodoService {
 
     public List<TodoDto> getAllTodos() {
         User currentUser = getCurrentUser();
-        List<Todo> todos = todoRepository.findByUserId(currentUser.getId());
+        List<Todo> todos = todoRepository.findByUserIdOrderBySortOrderAsc(currentUser.getId());
         return todos.stream()
             .map(this::convertToDto)
             .collect(Collectors.toList());
@@ -74,6 +82,14 @@ public class TodoService {
     public List<TodoDto> getTodosByTag(String tagName) {
         User currentUser = getCurrentUser();
         List<Todo> todos = todoRepository.findByUserIdAndTagName(currentUser.getId(), tagName);
+        return todos.stream()
+            .map(this::convertToDto)
+            .collect(Collectors.toList());
+    }
+
+    public List<TodoDto> getTodosByList(String listName) {
+        User currentUser = getCurrentUser();
+        List<Todo> todos = todoRepository.findByUserIdAndListNameOrderBySortOrderAsc(currentUser.getId(), listName);
         return todos.stream()
             .map(this::convertToDto)
             .collect(Collectors.toList());
@@ -99,6 +115,9 @@ public class TodoService {
         todo.setDescription(todoDetails.getDescription());
         todo.setCompleted(todoDetails.isCompleted());
         todo.setTags(todoDetails.getTags());
+        if (todoDetails.getListName() != null && !todoDetails.getListName().trim().isEmpty()) {
+            todo.setListName(todoDetails.getListName().trim());
+        }
 
         Todo updated = todoRepository.save(todo);
         return convertToDto(updated);
@@ -114,5 +133,34 @@ public class TodoService {
         }
 
         todoRepository.delete(todo);
+    }
+
+    // Applies a new manual order to a set of the current user's todos.
+    // ids is the full list of todo ids in their new display order; each one
+    // gets assigned a small sequential sortOrder so it sticks after a reload.
+    public List<TodoDto> reorderTodos(List<Long> ids) {
+        User currentUser = getCurrentUser();
+        List<Todo> todos = todoRepository.findAllById(ids);
+
+        for (Todo todo : todos) {
+            if (!todo.getUser().getId().equals(currentUser.getId())) {
+                throw new RuntimeException("You can only reorder your own todos");
+            }
+        }
+
+        for (int i = 0; i < ids.size(); i++) {
+            final Long targetId = ids.get(i);
+            final long newOrder = i;
+            todos.stream()
+                .filter(t -> t.getId().equals(targetId))
+                .findFirst()
+                .ifPresent(t -> t.setSortOrder(newOrder));
+        }
+
+        List<Todo> saved = todoRepository.saveAll(todos);
+        return saved.stream()
+            .sorted((a, b) -> a.getSortOrder().compareTo(b.getSortOrder()))
+            .map(this::convertToDto)
+            .collect(Collectors.toList());
     }
 }

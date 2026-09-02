@@ -1,6 +1,7 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
   content: ['./src/**/*.{js,jsx,ts,tsx}'],
+  darkMode: 'class',
   theme: {
     extend: {
       fontFamily: {
@@ -64,6 +65,18 @@ module.exports = {
         muted: '#8b938f',
         faint: '#a7afab',
         ghost: '#c6cbc6',
+        // Dark mode neutrals, same spirit as the light palette above but
+        // inverted. Used via `dark:bg-night-card` etc.
+        night: {
+          bg: '#1c1f1c',
+          sidebar: '#171917',
+          card: '#262a25',
+          border: '#33372f',
+          text: '#eef1ee',
+          muted: '#a3aba5',
+          faint: '#6c746e',
+          ghost: '#3a3f3a',
+        },
       },
       boxShadow: {
         card: '0 1px 2px rgba(31, 36, 32, 0.04), 0 8px 24px rgba(31, 36, 32, 0.05)',

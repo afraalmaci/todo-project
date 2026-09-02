@@ -10,6 +10,10 @@ body {
   background-color: #f6f8f6;
 }
 
+html.dark body {
+  background-color: #1c1f1c;
+}
+
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;

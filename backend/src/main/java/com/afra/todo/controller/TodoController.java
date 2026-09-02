@@ -1,5 +1,6 @@
 package com.afra.todo.controller;
 
+import com.afra.todo.dto.ReorderRequest;
 import com.afra.todo.dto.TodoDto;
 import com.afra.todo.model.Todo;
 import com.afra.todo.service.TodoService;
@@ -18,9 +19,14 @@ public class TodoController {
     }
 
     @GetMapping
-    public List<TodoDto> getAllTodos(@RequestParam(required = false) String tag) {
+    public List<TodoDto> getAllTodos(
+            @RequestParam(required = false) String tag,
+            @RequestParam(required = false) String list) {
         if (tag != null && !tag.trim().isEmpty()) {
             return todoService.getTodosByTag(tag.trim());
+        }
+        if (list != null && !list.trim().isEmpty()) {
+            return todoService.getTodosByList(list.trim());
         }
         return todoService.getAllTodos();
     }
@@ -33,6 +39,11 @@ public class TodoController {
     @PutMapping("/{id}")
     public TodoDto updateTodo(@PathVariable Long id, @RequestBody Todo todoDetails) {
         return todoService.updateTodo(id, todoDetails);
+    }
+
+    @PutMapping("/reorder")
+    public List<TodoDto> reorderTodos(@RequestBody ReorderRequest request) {
+        return todoService.reorderTodos(request.getIds());
     }
 
     @DeleteMapping("/{id}")

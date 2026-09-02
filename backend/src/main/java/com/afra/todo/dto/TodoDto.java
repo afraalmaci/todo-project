@@ -11,6 +11,8 @@ public class TodoDto {
     private LocalDateTime dueDate;
     private Set<String> tags; // Just tag names, not Tag objects
     private String username;
+    private String listName;
+    private Long sortOrder;
 
     public TodoDto() {}
 
@@ -34,4 +36,10 @@ public class TodoDto {
 
     public String getUsername() { return username; }
     public void setUsername(String username) { this.username = username; }
+
+    public String getListName() { return listName; }
+    public void setListName(String listName) { this.listName = listName; }
+
+    public Long getSortOrder() { return sortOrder; }
+    public void setSortOrder(Long sortOrder) { this.sortOrder = sortOrder; }
 }

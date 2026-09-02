@@ -47,21 +47,21 @@ export default function Login() {
   };
 
   return (
-    <div className="min-h-screen bg-mist flex items-center justify-center px-4 py-16">
-      <div className="w-full max-w-[340px] bg-white rounded-2xl shadow-card px-7 py-8">
+    <div className="min-h-screen bg-mist dark:bg-night-bg flex items-center justify-center px-4 py-16 transition-colors">
+      <div className="w-full max-w-[340px] bg-white dark:bg-night-card rounded-2xl shadow-card px-7 py-8">
         <div className="flex justify-center mb-6">
           <Logo size="lg" />
         </div>
 
-        <h1 className="text-xl font-bold text-ink text-center mb-1">
+        <h1 className="text-xl font-bold text-ink dark:text-night-text text-center mb-1">
           Welcome back
         </h1>
-        <p className="text-center text-muted text-sm mb-6">
+        <p className="text-center text-muted dark:text-night-muted text-sm mb-6">
           Log in to see your list
         </p>
 
         {error && (
-          <div className="mb-4 rounded-xl bg-rose-50 text-rose-500 text-sm font-medium px-3 py-2 text-center">
+          <div className="mb-4 rounded-xl bg-rose-50 dark:bg-[#3a2530] text-rose-500 dark:text-[#e0a3bd] text-sm font-medium px-3 py-2 text-center">
             {error}
           </div>
         )}
@@ -72,7 +72,7 @@ export default function Login() {
             placeholder="Username"
             value={username}
             onChange={(e) => setUsername(e.target.value)}
-            className="w-full bg-mist rounded-xl px-3.5 py-3 text-sm text-ink placeholder:text-faint focus:outline-none focus:ring-2 focus:ring-sage-300 transition"
+            className="w-full bg-mist dark:bg-night-bg rounded-xl px-3.5 py-3 text-sm text-ink dark:text-night-text placeholder:text-faint dark:placeholder:text-night-faint focus:outline-none focus:ring-2 focus:ring-sage-300 transition"
             required
           />
           <input
@@ -80,7 +80,7 @@ export default function Login() {
             placeholder="Password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            className="w-full bg-mist rounded-xl px-3.5 py-3 text-sm text-ink placeholder:text-faint focus:outline-none focus:ring-2 focus:ring-sage-300 transition"
+            className="w-full bg-mist dark:bg-night-bg rounded-xl px-3.5 py-3 text-sm text-ink dark:text-night-text placeholder:text-faint dark:placeholder:text-night-faint focus:outline-none focus:ring-2 focus:ring-sage-300 transition"
             required
           />
 
@@ -93,9 +93,9 @@ export default function Login() {
           </button>
         </form>
 
-        <p className="text-sm text-muted mt-5 text-center">
+        <p className="text-sm text-muted dark:text-night-muted mt-5 text-center">
           New here?{' '}
-          <Link to="/register" className="text-sage-600 font-semibold hover:text-sage-700">
+          <Link to="/register" className="text-sage-600 dark:text-sage-300 font-semibold hover:text-sage-700 dark:hover:text-sage-200">
             Create an account
           </Link>
         </p>

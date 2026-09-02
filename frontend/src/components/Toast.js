@@ -3,9 +3,9 @@ import React, { createContext, useCallback, useContext, useRef, useState } from 
 const ToastContext = createContext(null);
 
 const ACCENTS = {
-  success: { border: 'border-l-sage-400', badge: 'bg-sage-100 text-sage-600' },
-  error: { border: 'border-l-rose-400', badge: 'bg-rose-100 text-rose-500' },
-  info: { border: 'border-l-lavender-400', badge: 'bg-lavender-100 text-lavender-500' },
+  success: { border: 'border-l-sage-400', badge: 'bg-sage-100 dark:bg-[#2b3a30] text-sage-600 dark:text-[#9fd8bf]' },
+  error: { border: 'border-l-rose-400', badge: 'bg-rose-100 dark:bg-[#3a2530] text-rose-500 dark:text-[#e0a3bd]' },
+  info: { border: 'border-l-lavender-400', badge: 'bg-lavender-100 dark:bg-[#2c2840] text-lavender-500 dark:text-[#b3a6ee]' },
 };
 
 const ICONS = {
@@ -35,7 +35,7 @@ export function ToastProvider({ children }) {
           return (
             <div
               key={t.id}
-              className={`pointer-events-auto animate-pop flex items-center gap-2.5 bg-white text-sm px-4 py-3 rounded-xl border-l-4 shadow-card ${accent.border}`}
+              className={`pointer-events-auto animate-pop flex items-center gap-2.5 bg-white dark:bg-night-card text-sm px-4 py-3 rounded-xl border-l-4 shadow-card ${accent.border}`}
             >
               <span
                 aria-hidden="true"
@@ -43,7 +43,7 @@ export function ToastProvider({ children }) {
               >
                 {ICONS[t.type] || ICONS.info}
               </span>
-              <span className="text-ink font-medium">{t.message}</span>
+              <span className="text-ink dark:text-night-text font-medium">{t.message}</span>
             </div>
           );
         })}
