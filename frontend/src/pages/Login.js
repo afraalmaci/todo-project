@@ -1,12 +1,13 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import styles from '../styles/Login.module.css';
+import { apiFetch, setToken, setUsername as saveUsername } from '../utils/api';
+import Logo from '../components/Logo';
 
 export default function Login() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-  const [rememberMe, setRememberMe] = useState(false);
   const [error, setError] = useState('');
+  const [submitting, setSubmitting] = useState(false);
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
@@ -21,85 +22,83 @@ export default function Login() {
       return;
     }
 
+    setSubmitting(true);
     try {
-      const formData = new URLSearchParams();
-      formData.append('username', cleanUsername);
-      formData.append('password', cleanPassword);
-      if (rememberMe) {
-        formData.append('remember-me', 'true');
-      }
-
-      const response = await fetch('http://localhost:8080/api/auth/login', {
+      const response = await apiFetch('/api/auth/login', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/x-www-form-urlencoded',
-        },
-        credentials: 'include',
-        body: formData.toString(),
+        body: JSON.stringify({ username: cleanUsername, password: cleanPassword }),
       });
 
-      const data = await response.json();
-
-      if (response.ok && data.success) {
+      if (response.ok) {
+        const data = await response.json();
+        setToken(data.token);
+        saveUsername(data.username);
         navigate('/todos');
       } else {
-        setError(data.message || 'Invalid credentials');
+        const errorText = await response.text();
+        setError(errorText || 'Invalid credentials');
       }
     } catch (error) {
       console.error('Login error:', error);
       setError('Could not connect to server. Is the backend running?');
+    } finally {
+      setSubmitting(false);
     }
   };
 
   return (
-    <div className={styles.loginContainer}>
-      <h2 className={styles.loginTitle}>Login</h2>
-
-      {error && <div className={styles.error}>{error}</div>}
-
-      <form onSubmit={handleSubmit} className={styles.loginForm}>
-        <input
-          type="text"
-          placeholder="Username"
-          value={username}
-          onChange={(e) => setUsername(e.target.value)}
-          className={styles.loginInput}
-          required
-        />
-        <input
-          type="password"
-          placeholder="Password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          className={styles.loginInput}
-          required
-        />
-        
-        <div className={styles.rememberMeContainer}>
-          <input
-            type="checkbox"
-            id="remember-me"
-            checked={rememberMe}
-            onChange={(e) => setRememberMe(e.target.checked)}
-            className={styles.rememberMeCheckbox}
-          />
-          <label htmlFor="remember-me" className={styles.rememberMeLabel}>
-            Remember Me
-          </label>
+    <div className="min-h-screen bg-mist flex items-center justify-center px-4 py-16">
+      <div className="w-full max-w-[340px] bg-white rounded-2xl shadow-card px-7 py-8">
+        <div className="flex justify-center mb-6">
+          <Logo size="lg" />
         </div>
 
-        <button type="submit" className={styles.loginBtn}>
-          Login
-        </button>
-      </form>
+        <h1 className="text-xl font-bold text-ink text-center mb-1">
+          Welcome back
+        </h1>
+        <p className="text-center text-muted text-sm mb-6">
+          Log in to see your list
+        </p>
 
-      <div className={styles.registerPrompt}>
-        <span className={styles.registerText}>Don't have an account?</span>
-        <Link to="/register" className={styles.registerLink}>
-          <button type="button" className={styles.registerBtn}>
-            Register
+        {error && (
+          <div className="mb-4 rounded-xl bg-rose-50 text-rose-500 text-sm font-medium px-3 py-2 text-center">
+            {error}
+          </div>
+        )}
+
+        <form onSubmit={handleSubmit} className="flex flex-col gap-2.5">
+          <input
+            type="text"
+            placeholder="Username"
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
+            className="w-full bg-mist rounded-xl px-3.5 py-3 text-sm text-ink placeholder:text-faint focus:outline-none focus:ring-2 focus:ring-sage-300 transition"
+            required
+          />
+          <input
+            type="password"
+            placeholder="Password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            className="w-full bg-mist rounded-xl px-3.5 py-3 text-sm text-ink placeholder:text-faint focus:outline-none focus:ring-2 focus:ring-sage-300 transition"
+            required
+          />
+
+          <button
+            type="submit"
+            disabled={submitting}
+            className="mt-1 text-sm font-semibold text-white bg-sage-400 rounded-xl py-3 hover:bg-sage-500 transition disabled:opacity-60 disabled:pointer-events-none"
+          >
+            {submitting ? 'Logging in…' : 'Log in'}
           </button>
-        </Link>
+        </form>
+
+        <p className="text-sm text-muted mt-5 text-center">
+          New here?{' '}
+          <Link to="/register" className="text-sage-600 font-semibold hover:text-sage-700">
+            Create an account
+          </Link>
+        </p>
       </div>
     </div>
   );

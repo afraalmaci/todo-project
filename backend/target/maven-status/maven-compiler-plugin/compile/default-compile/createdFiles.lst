@@ -1,10 +1,17 @@
 com/afra/todo/config/SecurityConfig.class
+com/afra/todo/controller/AuthController.class
 com/afra/TodoProjectApplication$1.class
+com/afra/todo/service/AuthService.class
 com/afra/TodoProjectApplication.class
 com/afra/todo/model/Todo.class
 com/afra/todo/service/TodoService.class
+com/afra/todo/dto/TodoDto.class
 com/afra/todo/repository/UserRepository.class
 com/afra/todo/controller/TodoController.class
+com/afra/todo/dto/RegisterRequest.class
 com/afra/todo/model/Tag.class
 com/afra/todo/model/User.class
+com/afra/todo/dto/LoginRequest.class
 com/afra/todo/repository/TodoRepository.class
+com/afra/todo/service/UserDetailsServiceImpl.class
+com/afra/todo/dto/AuthResponse.class
